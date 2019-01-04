@@ -1,0 +1,50 @@
+version: '2'
+
+services:
+  mysql:
+    image: mysql/mysql-server:5.7
+    container_name: "mysql"
+    hostname: mysql
+    restart: always
+    networks:
+      netwp:
+        ipv4_address: 172.72.17.2
+    environment:
+      MYSQL_ROOT_PASSWORD: "mysqrootpass"
+      MYSQL_ROOT_HOST: '%'
+
+  wordpress:
+    image: fauzie/wordpress:latest
+    container_name: "wordpress"
+    hostname: wordpress
+    networks:
+      netwp:
+        ipv4_address: 172.72.17.3
+    depends_on:
+      - mysql
+    environment:
+      - VIRTUAL_HOST=wordpress.localhost
+      - SSH_PORT=2678
+      - SSH_PASSWORD=qwerty
+      - SITE_URL="http://wordpress.localhost"
+      - SITE_TITLE="Docker WordPress"
+      - ADMIN_USERNAME=admin
+      - ADMIN_PASSWORD=admin123
+      - ADMIN_EMAIL=admin@wordpress.localhost
+      - DB_HOST=172.72.17.2
+      - DB_NAME=wordpress
+      - DB_USER=root
+      - DB_PASSWORD=mysqrootpass
+      - PHP_MEMORY_LIMIT=64M
+      - PHP_UPLOAD_MAX_SIZE=10M
+    ports:
+      - 2678:2678
+      - 8080:80
+
+networks:
+  netwp:
+    driver: bridge
+    ipam:
+      config:
+        - subnet: 172.72.17.0/29
+          gateway: 172.72.17.1

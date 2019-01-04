@@ -1,0 +1,5 @@
+path: {{ .Env.HOME }}/website
+user: {{ default .Env.ADMIN_USERNAME "admin" }}
+color: auto
+disabled_commands:
+  - db drop

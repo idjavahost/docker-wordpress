@@ -5,19 +5,18 @@ if [[ ! -f /etc/.setupdone ]]; then
 
     # RUN INITIAL SETUP
     RANDPASS=$(date | md5sum | awk '{print $1}')
-    mkdir $HOME/website
     addgroup -g 1001 $USERGROUP
     adduser -D -u 1001 -h $HOME -s /bin/bash -G $USERGROUP $USERNAME
     echo "${USERNAME}:${RANDPASS}" | chpasswd &> /dev/null
     /usr/bin/ssh-keygen -A
 
-    if [[ ! -x "$(dockerize --help)" ]]; then
-        wget -qO - https://github.com/jwilder/dockerize/releases/download/v0.5.0/dockerize-linux-amd64-v0.5.0.tar.gz \
+    if [[ ! -x "$(command -v dockerize)" ]]; then
+        wget -qO - https://github.com/jwilder/dockerize/releases/download/v0.6.1/dockerize-alpine-linux-amd64-v0.6.1.tar.gz \
 	       | tar zxf - -C /usr/local/bin
         chmod +x /usr/local/bin/dockerize
     fi
 
-    if [[ ! -x "$(wp --info)" ]]; then
+    if [[ ! -x "$(command -v wp)" ]]; then
         curl -o /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
         chmod +x /usr/local/bin/wp
     fi
@@ -68,15 +67,15 @@ if [[ ! -f /etc/.setupdone ]]; then
     chown -R $USERNAME:$USERGROUP /var/tmp/nginx
     chown -R $USERNAME:$USERGROUP /var/log/nginx
     chown -R $USERNAME:$USERGROUP /var/cache/nginx
-    dockerize -template /template/nginx-conf.tmpl > /etc/nginx/nginx.conf
+    dockerize -template /template/nginx-conf.tmpl:/etc/nginx/nginx.conf &> /dev/null
 
     # SETUP PHP
     mkdir -p /var/lib/php
     chown -R $USERNAME:$USERGROUP /var/lib/php
     rm /usr/local/etc/php-fpm.d/*.conf
-    dockerize -template /template/php-fpm-pool.tmpl > /usr/local/etc/php-fpm.d/www.conf
-    dockerize -template /template/php-extra.tmpl > $PHP_INI_DIR/conf.d/00-custom.ini
-    dockerize -template /template/opcache.ini.tmpl > $PHP_INI_DIR/conf.d/10-opcache.ini
+    dockerize -template /template/php-fpm-pool.tmpl:/usr/local/etc/php-fpm.d/www.conf &> /dev/null
+    dockerize -template /template/php-extra.tmpl:$PHP_INI_DIR/conf.d/00-custom.ini &> /dev/null
+    dockerize -template /template/opcache.ini.tmpl:$PHP_INI_DIR/conf.d/10-opcache.ini &> /dev/null
 
     if [[ -f "${PHP_INI_DIR}/php.ini-production" ]]; then
         cp $PHP_INI_DIR/php.ini-production $PHP_INI_DIR/php.ini
@@ -84,10 +83,15 @@ if [[ ! -f /etc/.setupdone ]]; then
 
     # INSTALL WORDPRESS
     mkdir -p $HOME/.wp-cli
-    dockerize -template /template/wp-cli.config.tmpl > $HOME/.wp-cli/config.yml
+    dockerize -template /template/wp-cli.config.tmpl:$HOME/.wp-cli/config.yml &> /dev/null
     chmod 440 $HOME/.wp-cli/config.yml
 
+    chown -R $USERNAME:$USERGROUP $HOME
+
     if [[ ! -f "${HOME}/website/wp-config.php" ]]; then
+        if [[ ! -d "${HOME}/website" ]]; then
+            mkdir -p $HOME/website
+        fi
         echo "Downloading WordPress latest version ..."
         /usr/local/bin/php /usr/local/bin/wp --allow-root core download --path=$HOME/website
         chown -R $USERNAME:$USERGROUP $HOME/website
@@ -118,13 +122,15 @@ if [[ ! -f /etc/.setupdone ]]; then
 
     # INSTALL NODEJS YARN
     if [[ "${INSTALL_YARN}" == '1' ]]; then
-        su - $USERNAME -c "curl -o- -L https://yarnpkg.com/install.sh | bash"
+        echo "Installing yarn and gulp..."
+        su - $USERNAME -c "curl -o- -L https://yarnpkg.com/install.sh | bash" &> /dev/null
         echo "export PATH=\$HOME/.yarn/bin:\$HOME/.config/yarn/global/node_modules/.bin:\$PATH" >> $HOME/.bash_profile
         su - $USERNAME -c "$HOME/.yarn/bin/yarn global add gulp-cli"
     fi
 
     # MARK CONTAINER AS INSTALLED
     chown -R $USERNAME:$USERGROUP $HOME
+    rm -rf /template
     touch /etc/.setupdone
 fi
 

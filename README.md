@@ -11,10 +11,10 @@ Simple implementation WordPress on docker container.
 
 ### Environment Variables
 - `VIRTUAL_HOST` (:wordpress.localhost) : name your nginx virtual host, support multiple host separated by space
-- `USERNAME` (:wordpress) : linux username for running website & SSH login
-- `USERGROUP` (:wordpress) : linux user group for running website & SSH login
+- `USERNAME` (:wordpress) : linux username for running WordPress & SSH login
+- `USERGROUP` (:wordpress) : linux user group for running WordPress & SSH login
 - `HTTPS` (:off) : tell php if WordPress inside https proxy
-- `HOME` (:/var/www) : root website user home, WordPress root will added here inside `website` directory
+- `HOME` (:/var/www) : user home, WordPress root will added here inside `wordpress` directory
 - `SSH_PORT` (:2222) : SSH port
 - `SSH_PUBLIC_KEY` (:'') : Use public key authentication and disable password clear text login
 - `SSH_PASSWORD` (:'') : SSH password optional if you prefered using SSH public key
@@ -31,8 +31,9 @@ Simple implementation WordPress on docker container.
 - `OPCACHE_ENABLE_CLI` (:0) : enable opcache on php cli
 - `OPCACHE_MEMORY` (:128) : number only, max opcache memory limit
 - `NGINX_ACCESS_LOG` (:/var/log/nginx/access.log main) : `off` to disable nginx access log
+- `INSTALL_YARN` (:1) : Choose to install yarn package manager or not
 
-If this WordPress need a clean install or mapped volume not configured to `$HOME/website`. You nedd to specify all WordPress installation information here. All Environment below is required for first run this container.
+If this WordPress need a clean install or mapped volume not configured to `/var/www/wordpress`. You nedd to specify all WordPress installation information here. All Environment below is required for first run this container.
 
 - `DB_HOST` : localhost or server IP
 - `DB_NAME` : database name, if not exists wp-cli will try to create this

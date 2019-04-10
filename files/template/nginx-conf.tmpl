@@ -55,14 +55,14 @@ http {
 
     map $http_host $blogid {
         default -999;
-        #include {{ .Env.HOME }}/website/wp-content/plugins/nginx-helper/map.conf;
+        #include {{ .Env.HOME }}/wordpress/wp-content/plugins/nginx-helper/map.conf;
     }
 
     server {
         listen 80 default_server;
         server_name {{ .Env.VIRTUAL_HOST }};
 
-        root   {{ .Env.HOME }}/website;
+        root   {{ .Env.HOME }}/wordpress;
         index  index.php index.html;
 
         add_header X-Frame-Options "SAMEORIGIN";
@@ -165,7 +165,7 @@ http {
         }
 
         # Include custom nginx from webhost
-        include {{ .Env.HOME }}/website/nginx.conf;
+        include {{ .Env.HOME }}/wordpress/nginx.conf;
 
         # Include all extra server configuration
         include /etc/nginx/conf.d/*.conf;

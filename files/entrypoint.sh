@@ -5,8 +5,8 @@ if [[ ! -f /etc/.setupdone ]]; then
 
     # RUN INITIAL SETUP
     RANDPASS=$(date | md5sum | awk '{print $1}')
-    addgroup -g 1001 $USERGROUP
-    adduser -D -u 1001 -h $HOME -s /bin/bash -G $USERGROUP $USERNAME
+    addgroup -g 1000 $USERGROUP
+    adduser -D -u 1000 -h $HOME -s /bin/bash -G $USERGROUP $USERNAME
     echo "${USERNAME}:${RANDPASS}" | chpasswd &> /dev/null
     /usr/bin/ssh-keygen -A
 
@@ -26,8 +26,8 @@ if [[ ! -f /etc/.setupdone ]]; then
         chmod +x /usr/local/wp-completion.bash
     fi
 
-    if [[ ! -f "${HOME}/website/nginx.conf" ]]; then
-        touch $HOME/website/nginx.conf
+    if [[ ! -f "${HOME}/wordpress/nginx.conf" ]]; then
+        touch $HOME/wordpress/nginx.conf
     fi
 
     # PRINT WP CLI INFORMATIONS
@@ -88,22 +88,22 @@ if [[ ! -f /etc/.setupdone ]]; then
 
     chown -R $USERNAME:$USERGROUP $HOME
 
-    if [[ ! -f "${HOME}/website/wp-config.php" ]]; then
-        if [[ ! -d "${HOME}/website" ]]; then
-            mkdir -p $HOME/website
+    if [[ ! -f "${HOME}/wordpress/wp-config.php" ]]; then
+        if [[ ! -d "${HOME}/wordpress" ]]; then
+            mkdir -p $HOME/wordpress
         fi
         echo "Downloading WordPress latest version ..."
-        /usr/local/bin/php /usr/local/bin/wp --allow-root core download --path=$HOME/website
-        chown -R $USERNAME:$USERGROUP $HOME/website
+        /usr/local/bin/php /usr/local/bin/wp --allow-root core download --path=$HOME/wordpress
+        chown -R $USERNAME:$USERGROUP $HOME/wordpress
         echo "----------------------------------------------------------"
         if [[ -v DB_HOST && -v DB_NAME && -v DB_USER && -v DB_PASSWORD && -v SITE_URL && -v SITE_TITLE && -v ADMIN_USERNAME && -v ADMIN_PASSWORD && -v ADMIN_EMAIL ]]; then
-            /usr/local/bin/php /usr/local/bin/wp --allow-root --path=$HOME/website config create \
+            /usr/local/bin/php /usr/local/bin/wp --allow-root --path=$HOME/wordpress config create \
                 --dbname=$DB_NAME \
                 --dbuser=$DB_USER \
                 --dbpass=$DB_PASSWORD \
                 --dbhost=$DB_HOST
-            /usr/local/bin/php /usr/local/bin/wp --allow-root --path=$HOME/website db create
-            /usr/local/bin/php /usr/local/bin/wp --allow-root --path=$HOME/website core install \
+            /usr/local/bin/php /usr/local/bin/wp --allow-root --path=$HOME/wordpress db create
+            /usr/local/bin/php /usr/local/bin/wp --allow-root --path=$HOME/wordpress core install \
                 --url=$SITE_URL \
                 --title=$SITE_TITLE \
                 --admin_user=$ADMIN_USERNAME \

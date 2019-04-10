@@ -11,12 +11,9 @@ ENV     VIRTUAL_HOST=$DOCKER_HOST \
         HTTPS=off \
         USERNAME=wordpress \
         USERGROUP=wordpress \
-        INSTALL_YARN=1 \
-        ALPINE_MIRROR=mirrors.ustc.edu.cn
+        INSTALL_YARN=1
 
-RUN     echo "http://${ALPINE_MIRROR}/alpine/v3.8/main" > /etc/apk/repositories && \
-        echo "http://${ALPINE_MIRROR}/alpine/v3.8/community" >> /etc/apk/repositories && \
-        apk add --update --no-cache openssh bash nano htop nginx supervisor nodejs \
+RUN     apk add --update --no-cache openssh bash nano htop nginx supervisor nodejs \
         nginx-mod-http-fancyindex nginx-mod-http-headers-more wget git mysql-client \
         curl wget libmcrypt libpng libjpeg-turbo icu-libs gettext libintl && \
         rm /etc/nginx/conf.d/*

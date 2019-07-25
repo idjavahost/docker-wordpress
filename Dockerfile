@@ -1,4 +1,4 @@
-FROM    php:7.3-fpm-alpine
+FROM    php:5.6-fpm-alpine
 
 LABEL	maintainer="Rizal Fauzie Ridwan <rizal@fauzie.my.id>"
 
@@ -21,8 +21,8 @@ RUN     apk add --update --no-cache openssh bash nano htop nginx supervisor node
 RUN     apk add --virtual .build-deps freetype libxml2-dev libpng-dev libjpeg-turbo-dev libwebp-dev zlib-dev \
         libzip-dev gettext-dev icu-dev libxpm-dev libmcrypt-dev make gcc g++ autoconf && \
         docker-php-source extract && \
-        echo no | pecl install redis && \
-        docker-php-ext-enable redis && \
+        echo no | pecl install channel://pecl.php.net/redis-2.2.8 && \
+        pecl install xdebug-2.4.1 && \
         docker-php-source delete && \
         docker-php-ext-configure opcache --enable-opcache && \
         docker-php-ext-configure gd --with-png-dir=/usr --with-jpeg-dir=/usr && \

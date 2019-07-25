@@ -17,12 +17,12 @@ if [[ ! -f /etc/.setupdone ]]; then
     fi
 
     if [[ ! -x "$(command -v wp)" ]]; then
-        curl -o /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
+        curl -sSo /usr/local/bin/wp https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar
         chmod +x /usr/local/bin/wp
     fi
 
     if [[ ! -f /usr/local/wp-completion.bash ]]; then
-        curl -o /usr/local/wp-completion.bash https://raw.githubusercontent.com/wp-cli/wp-cli/master/utils/wp-completion.bash
+        curl -sSo /usr/local/wp-completion.bash https://raw.githubusercontent.com/wp-cli/wp-cli/master/utils/wp-completion.bash
         chmod +x /usr/local/wp-completion.bash
     fi
 

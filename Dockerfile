@@ -1,4 +1,4 @@
-FROM    php:7.2-fpm-alpine
+FROM    php:7.3-fpm-alpine
 
 LABEL	maintainer="Rizal Fauzie Ridwan <rizal@fauzie.my.id>"
 
@@ -11,7 +11,7 @@ ENV     VIRTUAL_HOST=$DOCKER_HOST \
         HTTPS=off \
         USERNAME=wordpress \
         USERGROUP=wordpress \
-        INSTALL_YARN=1
+        INSTALL_YARN=0
 
 RUN     apk add --update --no-cache openssh bash nano htop nginx supervisor nodejs \
         nginx-mod-http-fancyindex nginx-mod-http-headers-more wget git mysql-client \
@@ -19,7 +19,7 @@ RUN     apk add --update --no-cache openssh bash nano htop nginx supervisor node
         rm /etc/nginx/conf.d/*
 
 RUN     apk add --virtual .build-deps freetype libxml2-dev libpng-dev libjpeg-turbo-dev libwebp-dev zlib-dev \
-        gettext-dev icu-dev libxpm-dev libmcrypt-dev make gcc g++ autoconf && \
+        libzip-dev gettext-dev icu-dev libxpm-dev libmcrypt-dev make gcc g++ autoconf && \
         docker-php-source extract && \
         echo no | pecl install redis && \
         docker-php-ext-enable redis && \

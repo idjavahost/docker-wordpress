@@ -4,10 +4,11 @@ Simple implementation WordPress on docker container.
 
 ### Features
 - Nginx proxy with FastCGI Cache
-- PHP with fpm version 7.2
+- PHP 7.3 with fpm
 - Redis & memcaced optimized
 - Customizeable php configuration
 - WP CLI ready to use
+- Optional install Yarn
 
 ### Environment Variables
 - `VIRTUAL_HOST` (:wordpress.localhost) : name your nginx virtual host, support multiple host separated by space
@@ -31,7 +32,7 @@ Simple implementation WordPress on docker container.
 - `OPCACHE_ENABLE_CLI` (:0) : enable opcache on php cli
 - `OPCACHE_MEMORY` (:128) : number only, max opcache memory limit
 - `NGINX_ACCESS_LOG` (:/var/log/nginx/access.log main) : `off` to disable nginx access log
-- `INSTALL_YARN` (:1) : Choose to install yarn package manager or not
+- `INSTALL_YARN` (:0) : Choose to install yarn package manager or not
 
 If this WordPress need a clean install or mapped volume not configured to `/var/www/wordpress`. You nedd to specify all WordPress installation information here. All Environment below is required for first run this container.
 

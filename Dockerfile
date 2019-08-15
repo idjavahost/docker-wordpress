@@ -15,7 +15,7 @@ ENV     VIRTUAL_HOST=$DOCKER_HOST \
 
 RUN     apk add --update --no-cache openssh bash nano htop nginx supervisor nodejs \
         nginx-mod-http-fancyindex nginx-mod-http-headers-more wget git mysql-client \
-        curl wget libmcrypt libpng libjpeg-turbo icu-libs gettext libintl && \
+        curl wget libmcrypt libpng libjpeg-turbo icu-libs gettext libintl libzip && \
         rm /etc/nginx/conf.d/*
 
 RUN     apk add --virtual .build-deps freetype libxml2-dev libpng-dev libjpeg-turbo-dev libwebp-dev zlib-dev \
